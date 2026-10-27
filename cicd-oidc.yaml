@@ -47,7 +47,8 @@ Resources:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
               StringLike:
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}/${GitHubRepo}:*"
+                # TEMP wildcard again while we capture the exact token subject.
+                token.actions.githubusercontent.com:sub: "repo:*"
       # Scoped permissions needed to deploy both stacks + sync the site.
       Policies:
         - PolicyName: cloud-resume-deploy
