@@ -15,4 +15,6 @@ capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
 region = "us-east-1"
-profile = "administrator"
+# No `profile` here on purpose: CI (GitHub Actions) uses ambient OIDC credentials,
+# and there is no named profile on the runner. Locally, pass `--profile administrator`
+# on the command line when you need it.
