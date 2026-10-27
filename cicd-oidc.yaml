@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  GitHub Actions OIDC provider + IAM role for the Cloud Resume Challenge CI/CD.
+  Lets the GitHub repo deploy to AWS using short-lived credentials (no stored
+  access keys).
+
+Parameters:
+  GitHubOrg:
+    Type: String
+    Default: srogouski
+    Description: GitHub username or org that owns the repo.
+  GitHubRepo:
+    Type: String
+    Default: cloud-resume-challenge
+    Description: GitHub repository name.
+  BranchName:
+    Type: String
+    Default: main
+    Description: Branch allowed to assume the deploy role.
+
+Resources:
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList:
+        - sts.amazonaws.com
+      ThumbprintList:
+        # GitHub's OIDC thumbprint; AWS now validates the cert chain so this is
+        # effectively a formality, but the property is required.
+        - 6938fd4d98bab03faadb97b34396831e3780aea1
+
+  GitHubActionsDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: github-actions-cloud-resume-deploy
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Ref GitHubOidcProvider
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/${BranchName}"
+      # Scoped permissions needed to deploy both stacks + sync the site.
+      Policies:
+        - PolicyName: cloud-resume-deploy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CloudFormation
+                Effect: Allow
+                Action:
+                  - cloudformation:*
+                Resource: "*"
+              - Sid: Lambda
+                Effect: Allow
+                Action:
+                  - lambda:*
+                Resource: "*"
+              - Sid: ApiGateway
+                Effect: Allow
+                Action:
+                  - apigateway:*
+                Resource: "*"
+              - Sid: DynamoDB
+                Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource: "*"
+              - Sid: IamForServerless
+                Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:GetRole
+                  - iam:PassRole
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:GetRolePolicy
+                  - iam:TagRole
+                  - iam:UntagRole
+                Resource: "*"
+              - Sid: S3SiteAndSamArtifacts
+                Effect: Allow
+                Action:
+                  - s3:*
+                Resource: "*"
+              - Sid: CloudFrontInvalidate
+                Effect: Allow
+                Action:
+                  - cloudfront:CreateInvalidation
+                  - cloudfront:GetDistribution
+                  - cloudfront:GetInvalidation
+                  - cloudfront:UpdateDistribution
+                  - cloudfront:ListDistributions
+                Resource: "*"
+
+Outputs:
+  RoleArn:
+    Description: "ARN of the role GitHub Actions assumes. Put this in the workflow."
+    Value: !GetAtt GitHubActionsDeployRole.Arn

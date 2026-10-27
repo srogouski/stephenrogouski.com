@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jane Doe — Resume</title>
+  <meta name="description" content="Resume of Jane Doe, Cloud Engineer." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <!--
+    After deploying the backend, set this to your API Gateway invoke URL,
+    e.g. https://abc123.execute-api.us-east-1.amazonaws.com/count
+  -->
+  <script>
+    window.API_URL = "https://ukydqegjbd.execute-api.us-east-1.amazonaws.com/count";
+  </script>
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <h1>Jane Doe</h1>
+      <p class="title">Cloud Engineer</p>
+      <ul class="contact">
+        <li><a href="mailto:jane.doe@example.com">jane.doe@example.com</a></li>
+        <li><a href="https://github.com/janedoe" rel="noopener">github.com/janedoe</a></li>
+        <li><a href="https://linkedin.com/in/janedoe" rel="noopener">linkedin.com/in/janedoe</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container">
+    <section aria-labelledby="summary-heading">
+      <h2 id="summary-heading">Summary</h2>
+      <p>
+        Placeholder summary. Cloud engineer with experience building and
+        automating infrastructure on AWS. Replace this paragraph with your own.
+      </p>
+    </section>
+
+    <section aria-labelledby="skills-heading">
+      <h2 id="skills-heading">Skills</h2>
+      <ul class="skills">
+        <li>AWS (S3, Lambda, DynamoDB, API Gateway, CloudFront)</li>
+        <li>Infrastructure as Code (AWS SAM, CloudFormation)</li>
+        <li>Python</li>
+        <li>CI/CD (GitHub Actions)</li>
+        <li>Linux &amp; Networking Fundamentals</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="experience-heading">
+      <h2 id="experience-heading">Experience</h2>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3>Cloud Engineer — Placeholder Company</h3>
+          <span class="dates">2023 — Present</span>
+        </div>
+        <ul>
+          <li>Placeholder achievement. Describe something you built or improved.</li>
+          <li>Placeholder achievement. Quantify impact where possible.</li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3>Junior Engineer — Another Company</h3>
+          <span class="dates">2021 — 2023</span>
+        </div>
+        <ul>
+          <li>Placeholder achievement.</li>
+          <li>Placeholder achievement.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section aria-labelledby="education-heading">
+      <h2 id="education-heading">Education</h2>
+      <article class="entry">
+        <div class="entry-head">
+          <h3>B.S. in Computer Science — Placeholder University</h3>
+          <span class="dates">2017 — 2021</span>
+        </div>
+      </article>
+    </section>
+
+    <section aria-labelledby="certs-heading">
+      <h2 id="certs-heading">Certifications</h2>
+      <ul>
+        <li>AWS Certified Cloud Practitioner (placeholder)</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="container">
+    <p class="visitors">
+      This page has been viewed <span id="visitor-count">…</span> times.
+    </p>
+  </footer>
+
+  <script src="js/counter.js"></script>
+</body>
+</html>

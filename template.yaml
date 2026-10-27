@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Cloud Resume Challenge backend: a visitor counter.
+  API Gateway (HTTP API) -> Lambda (Python) -> DynamoDB.
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+    Runtime: python3.13
+    Architectures:
+      - arm64
+
+Resources:
+  VisitorCountTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-visitor-count"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  VisitorCounterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/visitor_counter/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref VisitorCountTable
+          ITEM_ID: "visits"
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VisitorCountTable
+      Events:
+        GetCount:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref VisitorApi
+            Path: /count
+            Method: GET
+
+  VisitorApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - GET
+        AllowHeaders:
+          - "content-type"
+
+Outputs:
+  ApiUrl:
+    Description: "Invoke URL for the visitor counter (GET)."
+    Value: !Sub "https://${VisitorApi}.execute-api.${AWS::Region}.amazonaws.com/count"
+  TableName:
+    Description: "DynamoDB table name."
+    Value: !Ref VisitorCountTable
+  FunctionName:
+    Description: "Lambda function name."
+    Value: !Ref VisitorCounterFunction

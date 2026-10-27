@@ -1,0 +1,30 @@
+# SAM / AWS
+.aws-sam/
+samconfig-local.toml
+packaged.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Node (if frontend tooling is added later)
+node_modules/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets / local env
+*.env
+.env
+.env.*
+aws-credentials*

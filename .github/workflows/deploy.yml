@@ -1,0 +1,103 @@
+name: Deploy Cloud Resume Challenge
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Required for GitHub OIDC -> AWS authentication.
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  BACKEND_STACK: cloud-resume-challenge
+  FRONTEND_STACK: cloud-resume-frontend
+  ROLE_ARN: arn:aws:iam::369506522111:role/github-actions-cloud-resume-deploy
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest boto3 "moto[dynamodb]"
+
+      - name: Run tests
+        run: pytest backend/tests -v
+
+  deploy:
+    name: Build and deploy
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: SAM build
+        run: sam build
+
+      - name: SAM deploy (backend)
+        run: |
+          sam deploy \
+            --stack-name "$BACKEND_STACK" \
+            --region "$AWS_REGION" \
+            --capabilities CAPABILITY_IAM \
+            --resolve-s3 \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset
+
+      - name: Resolve frontend bucket and distribution
+        id: frontend
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name "$FRONTEND_STACK" \
+            --query "Stacks[0].Outputs[?OutputKey=='BucketName'].OutputValue" \
+            --output text)
+          DIST=$(aws cloudformation describe-stacks \
+            --stack-name "$FRONTEND_STACK" \
+            --query "Stacks[0].Outputs[?OutputKey=='DistributionId'].OutputValue" \
+            --output text)
+          echo "bucket=$BUCKET" >> "$GITHUB_OUTPUT"
+          echo "distribution=$DIST" >> "$GITHUB_OUTPUT"
+
+      - name: Sync frontend to S3
+        run: |
+          aws s3 sync frontend/ "s3://${{ steps.frontend.outputs.bucket }}/" \
+            --delete \
+            --exclude "index.html" \
+            --cache-control "public, max-age=86400"
+          aws s3 cp frontend/index.html "s3://${{ steps.frontend.outputs.bucket }}/index.html" \
+            --content-type "text/html; charset=utf-8" \
+            --cache-control "public, max-age=300"
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ steps.frontend.outputs.distribution }}" \
+            --paths "/*"
