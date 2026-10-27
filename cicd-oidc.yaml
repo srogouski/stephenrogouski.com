@@ -50,9 +50,10 @@ Resources:
               # and not wildcard-to-all. This matches any ref/branch/environment in
               # this one repo, which is secure and satisfies that rule.
               StringLike:
-                # TEMP: wildcard while we read the exact token subject. AWS
-                # requires sub scoping, so "repo:*" (not "*") is the broad form.
-                token.actions.githubusercontent.com:sub: "repo:*"
+                # This account/repo issue OIDC tokens with immutable numeric IDs
+                # appended to the owner and repo (repo:owner@<id>/repo@<id>:...).
+                # Wildcards absorb those IDs while still pinning owner + repo name.
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}*/${GitHubRepo}*:*"
       # Scoped permissions needed to deploy both stacks + sync the site.
       Policies:
         - PolicyName: cloud-resume-deploy
