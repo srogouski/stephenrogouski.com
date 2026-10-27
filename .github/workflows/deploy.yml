@@ -1,4 +1,4 @@
-name: Deploy Cloud Resume Challenge
+name: Deploy stephenrogouski.com
 
 on:
   push:

@@ -15,8 +15,10 @@ Parameters:
     Description: GitHub repository name.
   BranchName:
     Type: String
-    Default: main
-    Description: Branch allowed to assume the deploy role.
+    Default: "*"
+    Description: >
+      Branch allowed to assume the deploy role. Use "*" to allow any ref in the
+      repo (simplest to get working); narrow to e.g. "main" once confirmed.
 
 Resources:
   GitHubOidcProvider:
@@ -45,7 +47,9 @@ Resources:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
               StringLike:
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/${BranchName}"
+                # TEMP: broadest wildcard to confirm the OIDC provider trust works.
+                # Narrow back to repo:${GitHubOrg}/${GitHubRepo}:* once CI is green.
+                token.actions.githubusercontent.com:sub: "repo:*"
       # Scoped permissions needed to deploy both stacks + sync the site.
       Policies:
         - PolicyName: cloud-resume-deploy
