@@ -47,9 +47,7 @@ Resources:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
               StringLike:
-                # TEMP: broadest wildcard to confirm the OIDC provider trust works.
-                # Narrow back to repo:${GitHubOrg}/${GitHubRepo}:* once CI is green.
-                token.actions.githubusercontent.com:sub: "repo:*"
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}/${GitHubRepo}:*"
       # Scoped permissions needed to deploy both stacks + sync the site.
       Policies:
         - PolicyName: cloud-resume-deploy
