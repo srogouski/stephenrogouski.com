@@ -46,9 +46,11 @@ Resources:
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              # AWS requires the trust to be scoped on `sub` (or job_workflow_ref)
+              # and not wildcard-to-all. This matches any ref/branch/environment in
+              # this one repo, which is secure and satisfies that rule.
               StringLike:
-                # TEMP wildcard again while we capture the exact token subject.
-                token.actions.githubusercontent.com:sub: "repo:*"
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}/${GitHubRepo}:*"
       # Scoped permissions needed to deploy both stacks + sync the site.
       Policies:
         - PolicyName: cloud-resume-deploy
