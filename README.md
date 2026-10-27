@@ -100,5 +100,5 @@ Live site: https://d3hf5icvswiyu1.cloudfront.net
 - [x] Backend (DynamoDB + Lambda + API Gateway + tests)
 - [x] Deploy backend (stack: `cloud-resume-challenge`, API: `https://ukydqegjbd.execute-api.us-east-1.amazonaws.com/count`)
 - [x] Host frontend on S3 + CloudFront (stack: `cloud-resume-frontend`, site: `https://d3hf5icvswiyu1.cloudfront.net`)
-- [ ] Custom domain (Route 53 + ACM)
-- [ ] CI/CD with GitHub Actions
+- [x] Custom domain (Route 53 + ACM): https://stephenrogouski.com and https://www.stephenrogouski.com
+- [x] CI/CD with GitHub Actions (OIDC; stack: `cloud-resume-cicd`)
