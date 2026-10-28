@@ -19,7 +19,6 @@
         <li><a href="mailto:stephenrogouski@yahoo.com">stephenrogouski@yahoo.com</a></li>
         <li><a href="https://www.linkedin.com/in/stephenrogouski-8451017" rel="noopener">LinkedIn</a></li>
         <li><a href="https://github.com/srogouski" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.rogonet.com" rel="noopener">rogonet.com</a></li>
         <li>Howell, New Jersey</li>
       </ul>
     </div>
@@ -48,19 +47,60 @@
     <section aria-labelledby="skills-heading">
       <h2 id="skills-heading">Skills</h2>
       <ul class="skills">
-        <li>C# / ASP.NET / .NET</li>
-        <li>SQL Server, ADO.NET</li>
-        <li>Angular / AngularJS</li>
+        <li>C# / ASP.NET Core / .NET</li>
+        <li>SQL Server, LINQ, ADO.NET</li>
+        <li>TypeScript / JavaScript</li>
+        <li>Python</li>
         <li>Node.js</li>
+        <li>Angular</li>
         <li>REST APIs</li>
-        <li>JavaScript, jQuery, Prototype, ExtJS</li>
-        <li>HTML, DHTML, CSS</li>
-        <li>XML / XSLT / AJAX</li>
-        <li>MVC 5, LINQ</li>
-        <li>IIS</li>
-        <li>Git &amp; Subversion</li>
+        <li>AI integration — Model Context Protocol (MCP) servers &amp; clients</li>
+        <li>Vercel AI SDK</li>
+        <li>Serverless &amp; AWS (Lambda, API Gateway, SAM)</li>
+        <li>HTML &amp; CSS</li>
         <li>Elasticsearch</li>
+        <li>Git</li>
       </ul>
+    </section>
+
+    <section aria-labelledby="projects-heading">
+      <h2 id="projects-heading">Recent Projects</h2>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3>MCP Server (Python / FastMCP) — Proof of Concept</h3>
+          <span class="dates">2025</span>
+        </div>
+        <ul>
+          <li>
+            Built a Model Context Protocol (MCP) server in Python using the FastMCP
+            framework to expose custom tools and data sources to AI assistants over
+            the MCP standard.
+          </li>
+          <li>
+            Implemented tool and resource handlers, request/response schemas, and
+            transport wiring so LLM clients can discover and invoke capabilities.
+          </li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3>MCP Client (Vercel AI SDK) — Proof of Concept</h3>
+          <span class="dates">2025</span>
+        </div>
+        <ul>
+          <li>
+            Built an MCP client on the Vercel AI SDK that connects to MCP servers,
+            discovers their tools, and lets a language model call them within a chat
+            workflow.
+          </li>
+          <li>
+            Integrated tool-calling and streaming responses, demonstrating end-to-end
+            communication between the model, the client, and the MCP server.
+          </li>
+        </ul>
+      </article>
     </section>
 
     <section aria-labelledby="experience-heading">
